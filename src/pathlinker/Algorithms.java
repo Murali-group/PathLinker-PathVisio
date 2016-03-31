@@ -20,7 +20,7 @@ import org.graphstream.graph.Node;
  * (Dijkstra's, Yen's KSP) used in PathLinker.
  *
  * @author Daniel Gil, Rupin Khera
- * @version Feb 12, 2016
+ * @version March 31, 2016
  */
 public class Algorithms {
     private static final double          INFINITY = Integer.MAX_VALUE;
