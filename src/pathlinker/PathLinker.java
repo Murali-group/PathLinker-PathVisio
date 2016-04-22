@@ -29,20 +29,11 @@ private class PathLinkerAction extends AbstractAction {
     }
     @Override
     public void actionPerformed(ActionEvent arg0) {
-        // TODO Auto-generated method stub
-
+        PathLinkerFrame pathLinkerFrame = new PathLinkerFrame(desktop.getFrame(), PathLinker.this);
+        pathLinkerFrame.setVisible(true);
     }
 
-//        private boolean n_pv;
-//        public MAPPBuilderAction(boolean b) {
-//            this.n_pv = b;
-//            putValue (NAME, "MAPP Builder");
-//        }
-//
-//        public void actionPerformed(ActionEvent e) {
-//            MAPPBuilderFrame mappBuilderFrame = new MAPPBuilderFrame(desktop.getFrame(), MAPPBuilder.this, n_pv);
-//            mappBuilderFrame.setVisible(true);
-//        }
+
     }
 
 }

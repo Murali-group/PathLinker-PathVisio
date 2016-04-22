@@ -25,7 +25,7 @@ public class PathLinkerFrame extends OkCancelDialog {
     private JTextField searchText;
     private JTextArea geneNamesText;
 
-    public PathLinkerFrame(JFrame parent, PathLinker path,boolean modal) {
+    public PathLinkerFrame(JFrame parent, PathLinker path) {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
@@ -68,14 +68,14 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(geneNames,cc.xy(3, 3));
         panel.add(scrollingArea , cc.xy(3, 5));
         geneNamesText.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    JPopupMenu m = processMouseEvent();
-                    if(m != null) {
-                        m.show(geneNamesText, e.getX(), e.getY());
-                    }
-                }
-            }
+//            public void mousePressed(MouseEvent e) {
+//                if (e.getButton() == MouseEvent.BUTTON3) {
+//                    JPopupMenu m = processMouseEvent();
+//                    if(m != null) {
+//                        m.show(geneNamesText, e.getX(), e.getY());
+//                    }
+//                }
+//            }
         }
         );
         return panel;
