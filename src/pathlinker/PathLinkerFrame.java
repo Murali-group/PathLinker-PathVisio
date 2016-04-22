@@ -24,7 +24,7 @@ public class PathLinkerFrame extends OkCancelDialog {
     private final PathLinker pathlinker;
     private JTextField searchText;
     private JTextArea sourceNamesText;
-    private JTextArea targetNames;
+    private JTextArea targetNamesText;
 
     public PathLinkerFrame(JFrame parent, PathLinker path) {
         super(parent, "PathLinker", parent, true);
@@ -58,27 +58,27 @@ public class PathLinkerFrame extends OkCancelDialog {
                }
             }
         });
-
+        //background graph input
         panel.add(searchSource, cc.xy(1, 1));
         panel.add(searchText, cc.xy(3, 1));
         panel.add(browseButton, cc.xy(5, 1));
+
+        //source nodes
         JLabel sources = new JLabel("<html> Enter source nodes(will edit) <br> " +
                 "(source1 [tab] source2 [tab] ... sourceN) </html>");
         sourceNamesText = new JTextArea(7,10);
-        JScrollPane scrollingArea = new JScrollPane(sourceNamesText);
-        //panel.add(sources,cc.xy(3, 3));
-        panel.add(scrollingArea , cc.xy(3, 5));
-//        sourceNamesText.addMouseListener(new MouseAdapter() {
-//            public void mousePressed(MouseEvent e) {
-//                if (e.getButton() == MouseEvent.BUTTON3) {
-//                    JPopupMenu m = processMouseEvent();
-//                    if(m != null) {
-//                        m.show(geneNamesText, e.getX(), e.getY());
-//                    }
-//                }
-//            }
-//        }
-//        );
+        JScrollPane scrollingAreaSource = new JScrollPane(sourceNamesText);
+        panel.add(sources,cc.xy(3, 3));
+        panel.add(scrollingAreaSource , cc.xy(3, 5));
+
+        //target nodes
+        JLabel targets = new JLabel("<html> Enter target nodes(will edit) <br> " +
+            "(target1 [tab] target2 [tab] ... targetN) </html>");
+        sourceNamesText = new JTextArea(7,10);
+        JScrollPane scrollingAreaTarget = new JScrollPane(sourceNamesText);
+        panel.add(targets,cc.xy(3, 7));
+        panel.add(scrollingAreaTarget , cc.xy(3, 9));
+
         return panel;
     }
 
