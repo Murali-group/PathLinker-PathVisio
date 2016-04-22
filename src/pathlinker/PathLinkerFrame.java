@@ -60,11 +60,11 @@ public class PathLinkerFrame extends OkCancelDialog {
         });
 
         panel.add(searchSource, cc.xy(1, 1));
-        //panel.add(searchText, cc.xy(3, 1));
+        panel.add(searchText, cc.xy(3, 1));
         panel.add(browseButton, cc.xy(5, 1));
         JLabel geneNames = new JLabel("<html> Enter source nodes(will edit) <br> " +
                 "(source1 [tab] source2 [tab] ... sourceN) </html>");
-        sourceNamesText = new JTextArea(7,10);
+        //sourceNamesText = new JTextArea(7,10);
         JScrollPane scrollingArea = new JScrollPane(sourceNamesText);
         panel.add(geneNames,cc.xy(3, 3));
         panel.add(scrollingArea , cc.xy(3, 5));
