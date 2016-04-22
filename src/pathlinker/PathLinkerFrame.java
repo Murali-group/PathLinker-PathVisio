@@ -30,7 +30,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
-        setSize(500, 700);
+        setSize(500, 500);
     }
 
     protected Component createDialogPane() {
