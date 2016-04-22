@@ -23,7 +23,8 @@ import org.pathvisio.gui.dialogs.OkCancelDialog;
 public class PathLinkerFrame extends OkCancelDialog {
     private final PathLinker pathlinker;
     private JTextField searchText;
-    private JTextArea geneNamesText;
+    private JTextArea sourceNamesText;
+    private JTextArea targetNames;
 
     public PathLinkerFrame(JFrame parent, PathLinker path) {
         super(parent, "PathLinker", parent, true);
@@ -59,15 +60,15 @@ public class PathLinkerFrame extends OkCancelDialog {
         });
 
         panel.add(searchSource, cc.xy(1, 1));
-        panel.add(searchText, cc.xy(3, 1));
+        //panel.add(searchText, cc.xy(3, 1));
         panel.add(browseButton, cc.xy(5, 1));
         JLabel geneNames = new JLabel("<html> Enter source nodes(will edit) <br> " +
                 "(source1 [tab] source2 [tab] ... sourceN) </html>");
-        geneNamesText = new JTextArea(7,10);
-        JScrollPane scrollingArea = new JScrollPane(geneNamesText);
+        sourceNamesText = new JTextArea(7,10);
+        JScrollPane scrollingArea = new JScrollPane(sourceNamesText);
         panel.add(geneNames,cc.xy(3, 3));
         panel.add(scrollingArea , cc.xy(3, 5));
-        geneNamesText.addMouseListener(new MouseAdapter() {
+//        sourceNamesText.addMouseListener(new MouseAdapter() {
 //            public void mousePressed(MouseEvent e) {
 //                if (e.getButton() == MouseEvent.BUTTON3) {
 //                    JPopupMenu m = processMouseEvent();
@@ -76,8 +77,8 @@ public class PathLinkerFrame extends OkCancelDialog {
 //                    }
 //                }
 //            }
-        }
-        );
+//        }
+//        );
         return panel;
     }
 
