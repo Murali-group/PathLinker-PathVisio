@@ -36,7 +36,7 @@ public class PathLinkerFrame extends OkCancelDialog {
     protected Component createDialogPane() {
         FormLayout layout = new FormLayout (
                 "pref, 4dlu, 150dlu, 4dlu, min",
-                "40dlu, 1dlu, 20dlu, 1dlu, 100dlu, 20dlu, 1dlu, 100dlu");
+                "40dlu, 1dlu, 20dlu, 1dlu, 100dlu, 1dlu, 20dlu, 1dlu, 100dlu");
         JPanel panel = new JPanel(layout);
         CellConstraints cc = new CellConstraints();
 
