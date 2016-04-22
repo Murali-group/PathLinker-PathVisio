@@ -62,7 +62,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(searchText, cc.xy(3, 1));
         panel.add(browseButton, cc.xy(5, 1));
         JLabel geneNames = new JLabel("<html> Enter source nodes(will edit) <br> " +
-                "(label [tab] ID [tab] DataSource) </html>");
+                "(source1 [tab] source2 [tab] ... sourceN) </html>");
         geneNamesText = new JTextArea(7,10);
         JScrollPane scrollingArea = new JScrollPane(geneNamesText);
         panel.add(geneNames,cc.xy(3, 3));
