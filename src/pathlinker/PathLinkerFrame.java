@@ -30,7 +30,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
-        setSize(500, 350);
+        setSize(1000, 350);
     }
 
     protected Component createDialogPane() {
@@ -38,7 +38,7 @@ public class PathLinkerFrame extends OkCancelDialog {
                 "pref, 4dlu, 150dlu, 4dlu, min",
                 "40dlu, 1dlu, 20dlu, 1dlu, 100dlu");
         JPanel panel = new JPanel(layout);
-        CellConstraints cc = new CellConstraints(1,3,10,10);
+        CellConstraints cc = new CellConstraints();
 
         JLabel searchSource = new JLabel("Background Network ");
         searchText = new JTextField();
@@ -76,8 +76,8 @@ public class PathLinkerFrame extends OkCancelDialog {
             "(target1 [tab] target2 [tab] ... targetN) </html>");
         targetNamesText = new JTextArea(7,10);
         JScrollPane scrollingAreaTarget = new JScrollPane(targetNamesText);
-        panel.add(targets,cc.xy(6, 3));
-        panel.add(scrollingAreaTarget , cc.xy(6, 5));
+        panel.add(targets,cc.xy(5, 3));
+        panel.add(scrollingAreaTarget , cc.xy(5, 5));
 
         return panel;
     }
