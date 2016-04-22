@@ -76,7 +76,7 @@ public class PathLinkerFrame extends OkCancelDialog {
             "(target1 [tab] target2 [tab] ... targetN) </html>");
         sourceNamesText = new JTextArea(7,10);
         JScrollPane scrollingAreaTarget = new JScrollPane(sourceNamesText);
-        panel.add(targets,cc.xy(3, 7));
+        panel.add(targets,cc.xy(3, 5));
         panel.add(scrollingAreaTarget , cc.xy(3, 9));
 
         return panel;
