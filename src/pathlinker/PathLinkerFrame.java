@@ -38,7 +38,7 @@ public class PathLinkerFrame extends OkCancelDialog {
                 "pref, 4dlu, 150dlu, 4dlu, min",
                 "40dlu, 1dlu, 20dlu, 1dlu, 100dlu");
         JPanel panel = new JPanel(layout);
-        CellConstraints cc = new CellConstraints();
+        CellConstraints cc = new CellConstraints(1, 3, 5, 9);
 
         JLabel searchSource = new JLabel("Background Network ");
         searchText = new JTextField();
