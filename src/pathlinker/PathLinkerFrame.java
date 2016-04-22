@@ -30,7 +30,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
-        setSize(500, 700);
+        setSize(500, 350);
     }
 
     protected Component createDialogPane() {
@@ -75,7 +75,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         JLabel targets = new JLabel("<html> Enter target nodes(will edit) <br> " +
             "(target1 [tab] target2 [tab] ... targetN) </html>");
         targetNamesText = new JTextArea(7,10);
-        JScrollPane scrollingAreaTarget = new JScrollPane(sourceNamesText);
+        JScrollPane scrollingAreaTarget = new JScrollPane(targetNamesText);
         panel.add(targets,cc.xy(3, 7));
         panel.add(scrollingAreaTarget , cc.xy(3, 9));
 
