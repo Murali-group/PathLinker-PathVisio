@@ -2,29 +2,21 @@ package pathlinker;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.pathvisio.desktop.plugin.Plugin;
 
 public class Activator implements BundleActivator {
 
-	private static BundleContext context;
+    private PathLinker plugin;
 
-	static BundleContext getContext() {
-		return context;
-	}
+    @Override
+    public void start(BundleContext context) throws Exception {
+       plugin = new PathLinker();
+       context.registerService(Plugin.class.getName(), plugin, null);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-	}
+    @Override
+    public void stop(BundleContext context) throws Exception {
+       plugin.done();
+    }
 
 }
