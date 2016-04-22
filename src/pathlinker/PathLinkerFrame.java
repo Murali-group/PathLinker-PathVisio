@@ -39,7 +39,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         JPanel panel = new JPanel(layout);
         CellConstraints cc = new CellConstraints();
 
-        JLabel searchSource = new JLabel("File to build ");
+        JLabel searchSource = new JLabel("Background Network ");
         searchText = new JTextField();
         final JButton browseButton = new JButton("Browse ");
         final JFileChooser fc = new JFileChooser();
