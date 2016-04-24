@@ -190,8 +190,8 @@ public class Driver {
                 pathway.add(edge);
             }
             prev = n;
-            prevX = n.getAttribute("X");
-            prevY = n.getAttribute("Y");
+//            prevX = n.getAttribute("X");
+//            prevY = n.getAttribute("Y");
         }
 
     }
