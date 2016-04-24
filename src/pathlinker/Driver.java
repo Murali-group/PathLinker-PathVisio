@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Scanner;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -20,15 +22,18 @@ import org.pathvisio.desktop.PvDesktop;
 import pathlinker.Algorithms.Path;
 
 public class Driver {
-    private PvDesktop desktop;
-    private HashSet<String> visitedNodes;
-    private Pathway pathway;
+    private PvDesktop       desktop;
+    private HashSet<String> visitedElements;
+    private Pathway         pathway;
+
+
     public Driver(PvDesktop desk) {
         desktop = desk;
-        visitedNodes = new HashSet<>();
+        visitedElements = new HashSet<>();
     }
 
-    //rough setup.  will modulize later
+
+    // rough setup. will modulize later
     public void buildSubgraphs(String sourceNodes, String targetNodes, String backgroundGraphFile)
         throws IOException {
         long time = System.nanoTime();
@@ -133,7 +138,8 @@ public class Driver {
             if(edge_weight == 0){
                 w = 0;
             }else{
-                w = -1 * Math.log(Math.max(0.000000001, edge_weight / sumWeight)) / Math.log(10);
+                //add paramter later
+                w = -1 * Math.log(Math.max(0.000000001, edge_weight)) / Math.log(10);
             }
 
             edgeWeights.put(edge, w);
@@ -145,39 +151,119 @@ public class Driver {
 
         // runs pathlinker
         ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100);
-        for(Path p : result) {
-           makePath(p);
+
+        Graph subgraph = new DefaultGraph("subgraph", false, false);
+        HashSet<String> edges = new HashSet<>();
+        for(Path p : result){
+            makeSubgraph(p,subgraph,edges);
         }
-          System.out.println(System.nanoTime() - time);
+        graph = subgraph;
+
+        printGraph(subgraph,sources,pathway);
+        System.out.println(System.nanoTime() - time);
     }
+
+
+    private void printGraph(Graph subgraph,HashSet<String> sources,Pathway pathway) {
+        Queue<Node> queue = new ArrayDeque<>();
+        double x = 65;
+        double y = 65;
+        //print sources on top row
+        for(String s : sources) {
+            Node n = subgraph.getNode(s);
+            queue.add(n);
+            visitedElements.add(s);
+            PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+            gnode.setMCenterX(x);
+            gnode.setMCenterY(65);
+            gnode.setMHeight(20);
+            gnode.setMWidth(80);
+            gnode.setTextLabel(s);
+            gnode.setElementID(s);
+            n.addAttribute("X", x);
+            n.addAttribute("Y", y);
+            x = x + 100;
+            pathway.add(gnode);
+        }
+
+        //reset x to 65.  happens every level
+        x = 65;
+        //y coordinate for nodes
+        y = 65;
+        //print nodes in ordered format
+        while(!queue.isEmpty()) {
+            Node prev = queue.remove();
+            double newY = (Double)prev.getAttribute("Y");
+            if( newY > y) {
+                y = newY;
+                x = 65;
+            }
+            for(Edge e : prev.getEachLeavingEdge()) {
+                System.out.println(e.getSourceNode().getId() + ":" + e.getTargetNode().getId());
+                Node curr = e.getTargetNode();
+                if(!visitedElements.contains(curr.getId())) {
+                    PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+                    gnode.setMCenterX(x);
+                    gnode.setMCenterY(y + 100);
+                    gnode.setMHeight(20);
+                    gnode.setMWidth(80);
+                    gnode.setTextLabel(curr.getId());
+                    gnode.setElementID(curr.getId());
+                    curr.addAttribute("X", x);
+                    curr.addAttribute("Y", y + 100);
+
+                    x = x + 100;
+                    pathway.add(gnode);
+                    visitedElements.add(curr.getId());
+                    queue.add(curr);
+                }
+            }
+        }
+
+        //print edges
+        for(Node n : subgraph) {
+            for(Edge e: n.getEachLeavingEdge()) {
+                if(!visitedElements.contains(e.getId())) {
+                    PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
+                    edge.setEndLineType(LineType.ARROW);
+                    edge.setMStartX((Double)e.getSourceNode().getAttribute("X"));
+                    edge.setMStartY((Double)e.getSourceNode().getAttribute("Y") + 10);
+                    edge.setMEndX((Double)e.getTargetNode().getAttribute("X"));
+                    edge.setMEndY((Double)e.getTargetNode().getAttribute("Y") - 10);
+                    visitedElements.add(e.getId());
+                    pathway.add(edge);
+                }
+            }
+        }
+    }
+
 
     private void makePath(Path p) {
         Node prev = null;
         double prevX = 0;
         double prevY = 0;
-        for(Node n : p.nodeList) {
-            if(n.getId().equals("SOURCE") || n.getId().equals("TARGET")) {
+        for(Node n : p.nodeList){
+            if(n.getId().equals("SOURCE") || n.getId().equals("TARGET")){
                 continue;
             }
 
-
-            if(!visitedNodes.contains(n.getId())) {
+            if(!visitedElements.contains(n.getId())){
                 PathwayElement node = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-                double x = Math.random()*1000;
+                double x = Math.random() * 1000;
                 node.setMCenterX(x);
-                double y = Math.random()*1000;
+                double y = Math.random() * 1000;
                 node.setMCenterY(y);
                 node.setMHeight(20);
                 node.setMWidth(80);
                 node.setTextLabel(n.getId());
                 node.setElementID(n.getId());
                 pathway.add(node);
-                visitedNodes.add(n.getId());
+                visitedElements.add(n.getId());
                 n.addAttribute("X", x);
                 n.addAttribute("Y", y);
             }
 
-            if(prev!= null) {
+            if(prev != null){
                 PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
                 edge.setEndLineType(LineType.ARROW);
                 edge.setMStartX(prevX);
@@ -190,6 +276,26 @@ public class Driver {
             prev = n;
             prevX = n.getAttribute("X");
             prevY = n.getAttribute("Y");
+        }
+
+    }
+
+
+    private void makeSubgraph(Path p, Graph subgraph,HashSet<String> edges) {
+        Node prev = null;
+
+        for(Node n : p.nodeList){
+            if(n.getId().equals("SOURCE") || n.getId().equals("TARGET")){
+                continue;
+            }
+            Node curr = subgraph.addNode(n.getId());
+            if(prev != null){
+                Edge edge = subgraph.addEdge(prev.getId() + "->" + curr.getId(), prev, curr, true);
+                edges.add(edge.getId());
+            }
+
+            prev = curr;
+
         }
 
     }
