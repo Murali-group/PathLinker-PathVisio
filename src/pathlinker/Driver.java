@@ -173,25 +173,23 @@ public class Driver {
                 node.setElementID(n.getId());
                 pathway.add(node);
                 visitedNodes.add(n.getId());
-//                n.addAttribute("X", x);
-//                n.addAttribute("Y", y);
-                n.addAttribute("PathwayElement", node);
+                n.addAttribute("X", x);
+                n.addAttribute("Y", y);
             }
 
             if(prev!= null) {
                 PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
                 edge.setEndLineType(LineType.ARROW);
-//                edge.setMStartX(prevX);
-//                edge.setMStartY(prevY + 10);
-//                edge.setMEndX((Double)n.getAttribute("X"));
-//                edge.setMEndY((Double)n.getAttribute("Y") - 10);
-                edge.setMStart(prev.getAttribute("PathwayElement"));
-                edge.setMEnd(n.getAttribute("PathwayElement"));
+                edge.setMStartX(prevX);
+                edge.setMStartY(prevY + 10);
+                edge.setMEndX((Double)n.getAttribute("X"));
+                edge.setMEndY((Double)n.getAttribute("Y") - 10);
+
                 pathway.add(edge);
             }
             prev = n;
-//            prevX = n.getAttribute("X");
-//            prevY = n.getAttribute("Y");
+            prevX = n.getAttribute("X");
+            prevY = n.getAttribute("Y");
         }
 
     }
