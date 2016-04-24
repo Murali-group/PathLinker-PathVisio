@@ -9,28 +9,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import java.io.IOException;
+import javax.swing.*;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 public class PathLinkerFrame extends OkCancelDialog {
     private final PathLinker pathlinker;
-    private JTextField searchText;
+    private JTextField graphFile;
     private JTextArea sourceNamesText;
     private JTextArea targetNamesText;
-
+    private Driver driver;
     public PathLinkerFrame(JFrame parent, PathLinker path) {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
         setSize(500, 500);
+        driver = new Driver(pathlinker.desktop);
     }
 
     protected Component createDialogPane() {
@@ -41,7 +35,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         CellConstraints cc = new CellConstraints();
 
         JLabel searchSource = new JLabel("Background Network ");
-        searchText = new JTextField();
+        graphFile = new JTextField();
         final JButton browseButton = new JButton("Browse ");
         final JFileChooser fc = new JFileChooser();
 
@@ -51,16 +45,16 @@ public class PathLinkerFrame extends OkCancelDialog {
                     int returnVal = fc.showOpenDialog(PathLinkerFrame.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
-                        searchText.setText(file.toString());
+                        graphFile.setText(file.toString());
                     } else {
-                        searchText.setText("");
+                        graphFile.setText("");
                     }
                }
             }
         });
         //background graph input
         panel.add(searchSource, cc.xy(1, 1));
-        panel.add(searchText, cc.xy(3, 1));
+        panel.add(graphFile, cc.xy(3, 1));
         panel.add(browseButton, cc.xy(5, 1));
 
         //source nodes
@@ -80,6 +74,16 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(scrollingAreaTarget , cc.xy(3, 9));
 
         return panel;
+    }
+
+    protected void okPressed() {
+       try{
+        driver.buildSubgraphs(sourceNamesText.getText(), targetNamesText.getText(), graphFile.getText());
+    }catch(IOException e){
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+        super.okPressed();
     }
 
 }
