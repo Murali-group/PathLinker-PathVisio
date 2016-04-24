@@ -156,30 +156,33 @@ public class Driver {
         double prevY = 0;
         for(Node n : p.nodeList) {
             //will be removed when doing edges
-//            if(visitedNodes.contains(n.getId())) {
-//                continue;
-//            }
-            PathwayElement node = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-            double x = Math.random()*1000;
-            node.setMCenterX(x);
-            double y = Math.random()*1000;
-            node.setMCenterY(y);
-            node.setMHeight(20);
-            node.setMWidth(80);
-            node.setTextLabel(n.getId());
-            node.setElementID(n.getId());
-            pathway.add(node);
-            visitedNodes.add(n.getId());
+            if(!visitedNodes.contains(n.getId())) {
+                PathwayElement node = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+                double x = Math.random()*1000;
+                node.setMCenterX(x);
+                double y = Math.random()*1000;
+                node.setMCenterY(y);
+                node.setMHeight(20);
+                node.setMWidth(80);
+                node.setTextLabel(n.getId());
+                node.setElementID(n.getId());
+                pathway.add(node);
+                visitedNodes.add(n.getId());
+                n.addAttribute("X", x);
+                n.addAttribute("Y", y);
+            }
+
             if(prev!= null) {
                 PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
                 edge.setMStartX(prevX);
                 edge.setMStartY(prevY);
-                edge.setMEndX(x);
-                edge.setMEndY(y);
+                edge.setMEndX(n.getAttribute("X"));
+                edge.setMEndY(n.getAttribute("Y"));
+                pathway.add(edge);
             }
             prev = n;
-            prevX = x;
-            prevY = y;
+            prevX = n.getAttribute("X");
+            prevY = n.getAttribute("Y");
         }
 
     }
