@@ -174,12 +174,11 @@ public class Driver {
 
             if(prev!= null) {
                 PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
-                edge.setMStartX(prevX);
-                edge.setMStartY(prevY);
-                edge.setMEndX(n.getAttribute("X"));
-                edge.setMEndY(n.getAttribute("Y"));
-                edge.addMAnchor(0);
-                edge.addMAnchor(1);
+                edge.setMStartX(prevX + 40);
+                edge.setMStartY(prevY + 10);
+                edge.setMEndX((Integer)n.getAttribute("X") - 40);
+                edge.setMEndY((Integer)n.getAttribute("Y") - 10);
+
                 pathway.add(edge);
             }
             prev = n;
