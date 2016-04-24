@@ -178,6 +178,8 @@ public class Driver {
                 edge.setMStartY(prevY);
                 edge.setMEndX(n.getAttribute("X"));
                 edge.setMEndY(n.getAttribute("Y"));
+                edge.addMAnchor(0);
+                edge.addMAnchor(1);
                 pathway.add(edge);
             }
             prev = n;
