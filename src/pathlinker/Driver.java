@@ -146,12 +146,12 @@ public class Driver {
         // runs pathlinker
         ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100);
         for(Path p : result) {
-           makeNode(p);
+           makePath(p);
         }
           System.out.println(System.nanoTime() - time);
     }
 
-    private void makeNode(Path p) {
+    private void makePath(Path p) {
         Node prev = null;
         double prevX = 0;
         double prevY = 0;
