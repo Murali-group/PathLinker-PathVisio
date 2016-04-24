@@ -12,6 +12,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
@@ -155,7 +156,11 @@ public class Driver {
         double prevX = 0;
         double prevY = 0;
         for(Node n : p.nodeList) {
-            //will be removed when doing edges
+            if(n.getId().equals("SOURCE") || n.getId().equals("TARGET")) {
+                continue;
+            }
+
+
             if(!visitedNodes.contains(n.getId())) {
                 PathwayElement node = PathwayElement.createPathwayElement(ObjectType.DATANODE);
                 double x = Math.random()*1000;
@@ -174,6 +179,7 @@ public class Driver {
 
             if(prev!= null) {
                 PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
+                edge.setEndLineType(LineType.ARROW);
                 edge.setMStartX(prevX);
                 edge.setMStartY(prevY + 10);
                 edge.setMEndX((Double)n.getAttribute("X"));
