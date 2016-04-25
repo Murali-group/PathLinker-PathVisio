@@ -171,6 +171,9 @@ public class Driver {
         //print sources on top row
         for(String s : sources) {
             Node n = subgraph.getNode(s);
+            if(n == null) {
+                continue;
+            }
             queue.add(n);
             visitedElements.add(s);
             PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
