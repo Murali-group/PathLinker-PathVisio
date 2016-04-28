@@ -138,7 +138,7 @@ public class Driver {
             if(edge_weight == 0){
                 w = 0;
             }else{
-                //add paramter later
+                // add paramter later
                 w = -1 * Math.log(Math.max(0.000000001, edge_weight)) / Math.log(10);
             }
 
@@ -155,23 +155,30 @@ public class Driver {
         Graph subgraph = new DefaultGraph("subgraph", false, false);
         HashSet<String> edges = new HashSet<>();
         for(Path p : result){
-            makeSubgraph(p,subgraph,edges);
+            makeSubgraph(p, subgraph, edges);
         }
         graph = subgraph;
 
-        printGraph(subgraph,sources,pathway);
+        printGraph(subgraph, sources, targets, pathway);
         System.out.println(System.nanoTime() - time);
     }
 
 
-    private void printGraph(Graph subgraph,HashSet<String> sources,Pathway pathway) {
+    // want to try printing backwards?????
+    // could have a better looking layout
+    // will update for later
+    private void printGraph(
+        Graph subgraph,
+        HashSet<String> sources,
+        HashSet<String> targets,
+        Pathway pathway) {
         Queue<Node> queue = new ArrayDeque<>();
         double x = 65;
         double y = 65;
-        //print sources on top row
-        for(String s : sources) {
+        // print sources on top row
+        for(String s : sources){
             Node n = subgraph.getNode(s);
-            if(n == null) {
+            if(n == null){
                 continue;
             }
             queue.add(n);
@@ -185,26 +192,27 @@ public class Driver {
             gnode.setElementID(s);
             n.addAttribute("X", x);
             n.addAttribute("Y", y);
+            n.addAttribute("gNode", gnode);
             x = x + 100;
             pathway.add(gnode);
         }
 
-        //reset x to 65.  happens every level
+        // reset x to 65. happens every level
         x = 65;
-        //y coordinate for nodes
+        // y coordinate for nodes
         y = 65;
-        //print nodes in ordered format
-        while(!queue.isEmpty()) {
+        // print nodes in ordered format
+        while(!queue.isEmpty()){
             Node prev = queue.remove();
             double newY = (Double)prev.getAttribute("Y");
-            if( newY > y) {
+            if(newY > y){
                 y = newY;
                 x = 65;
             }
-            for(Edge e : prev.getEachLeavingEdge()) {
+            for(Edge e : prev.getEachLeavingEdge()){
                 System.out.println(e.getSourceNode().getId() + ":" + e.getTargetNode().getId());
                 Node curr = e.getTargetNode();
-                if(!visitedElements.contains(curr.getId())) {
+                if(!visitedElements.contains(curr.getId()) && !targets.contains(curr.getId())){
                     PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
                     gnode.setMCenterX(x);
                     gnode.setMCenterY(y + 100);
@@ -214,7 +222,7 @@ public class Driver {
                     gnode.setElementID(curr.getId());
                     curr.addAttribute("X", x);
                     curr.addAttribute("Y", y + 100);
-
+                    curr.addAttribute("gNode", gnode);
                     x = x + 100;
                     pathway.add(gnode);
                     visitedElements.add(curr.getId());
@@ -223,22 +231,50 @@ public class Driver {
             }
         }
 
-        //print edges
-        for(Node n : subgraph) {
-            for(Edge e: n.getEachLeavingEdge()) {
-                if(!visitedElements.contains(e.getId())) {
+        x = 65;
+        for(String s : targets){
+            Node curr = subgraph.getNode(s);
+            if(curr == null){
+                continue;
+            }
+            visitedElements.add(s);
+            PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+            gnode.setMCenterX(x);
+            gnode.setMCenterY(y + 100);
+            gnode.setMHeight(20);
+            gnode.setMWidth(80);
+            gnode.setTextLabel(s);
+            gnode.setElementID(s);
+            curr.addAttribute("X", x);
+            curr.addAttribute("Y", y + 100);
+            x = x + 100;
+            curr.addAttribute("gNode", gnode);
+            pathway.add(gnode);
+        }
+
+        // print edges
+        // want to move to above loop for effecience.
+        // not priority yet though
+        for(Node n : subgraph){
+            for(Edge e : n.getEachLeavingEdge()){
+                if(!visitedElements.contains(e.getId())){
                     PathwayElement edge = PathwayElement.createPathwayElement(ObjectType.LINE);
                     edge.setEndLineType(LineType.ARROW);
                     edge.setMStartX((Double)e.getSourceNode().getAttribute("X"));
                     edge.setMStartY((Double)e.getSourceNode().getAttribute("Y") + 10);
                     edge.setMEndX((Double)e.getTargetNode().getAttribute("X"));
                     edge.setMEndY((Double)e.getTargetNode().getAttribute("Y") - 10);
+                    edge.getMStart().linkTo(e.getSourceNode().getAttribute("gNode"));
+                    edge.getMEnd().linkTo(e.getTargetNode().getAttribute("gNode"));
                     visitedElements.add(e.getId());
                     pathway.add(edge);
                 }
             }
         }
     }
+
+
+
 
 
     private void makePath(Path p) {
@@ -284,14 +320,18 @@ public class Driver {
     }
 
 
-    private void makeSubgraph(Path p, Graph subgraph,HashSet<String> edges) {
-        Node prev = null;
 
+    private void makeSubgraph(Path p, Graph subgraph, HashSet<String> edges) {
+        Node prev = null;
+        int count = 1;
         for(Node n : p.nodeList){
             if(n.getId().equals("SOURCE") || n.getId().equals("TARGET")){
                 continue;
             }
             Node curr = subgraph.addNode(n.getId());
+            if(!curr.hasAttribute("Path")){
+                curr.addAttribute("Path", count);
+            }
             if(prev != null){
                 Edge edge = subgraph.addEdge(prev.getId() + "->" + curr.getId(), prev, curr, true);
                 edges.add(edge.getId());
