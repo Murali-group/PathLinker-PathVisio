@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Scanner;
+import javax.swing.JPanel;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -35,7 +36,7 @@ public class Driver {
 
 
     // rough setup. will modulize later
-    public void buildSubgraphs(String sourceNodes, String targetNodes, String backgroundGraphFile)
+    public void buildSubgraphs(String sourceNodes, String targetNodes, String backgroundGraphFile,JPanel panel)
         throws IOException {
         long time = System.nanoTime();
         if(!desktop.getSwingEngine().canDiscardPathway()){
@@ -151,7 +152,7 @@ public class Driver {
         Algorithms.setEdgeWeights(edgeWeights);
 
         // runs pathlinker
-        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100,desktop);
+        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100,panel);
 
         Graph subgraph = new DefaultGraph("subgraph", false, false);
         HashSet<String> edges = new HashSet<>();

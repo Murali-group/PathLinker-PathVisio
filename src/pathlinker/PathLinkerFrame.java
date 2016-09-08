@@ -75,7 +75,8 @@ public class PathLinkerFrame extends OkCancelDialog {
 
     protected void okPressed() {
        try{
-        driver.buildSubgraphs(sourceNamesText.getText(), targetNamesText.getText(), graphFile.getText());
+        JPanel panel = new JPanel();
+        driver.buildSubgraphs(sourceNamesText.getText(), targetNamesText.getText(), graphFile.getText(),panel);
     }catch(IOException e){
         // TODO Auto-generated catch block
         e.printStackTrace();

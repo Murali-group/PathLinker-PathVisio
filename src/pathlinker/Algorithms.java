@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
+import javax.swing.JPanel;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-import org.pathvisio.desktop.PvDesktop;
 
 /**
  * // -------------------------------------------------------------------------
@@ -129,9 +129,10 @@ public class Algorithms {
      * @param maxK the number of shortest paths
      * @return a list of k-shortest paths in sorted order by cost
      */
-    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK,PvDesktop desktop) {
-
-        JProgressBar bar = new JProgressBar(0,maxK);
+    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK,JPanel panel) {
+        JLabel text = new JLabel();
+        text.setText("0/" + maxK);
+        panel.add(text);
         // the list of shortest paths
         ArrayList<Path> A = new ArrayList<Path>();
 
@@ -169,7 +170,6 @@ public class Algorithms {
         }
 
         for(int k = 1; k < maxK; k++){
-            bar.setValue(k);
             // previously computed shortest path
             Path latestPath = A.get(A.size() - 1);
 
