@@ -55,7 +55,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(browseButton, cc.xy(5, 1));
 
         //source nodes
-        JLabel sources = new JLabel("<html> Enter source nodes(will edit) <br> " +
+        JLabel sources = new JLabel("<html> Enter source nodes <br> " +
                 "(source1 [tab] source2 [tab] ... sourceN) </html>");
         sourceNamesText = new JTextArea(7,10);
         JScrollPane scrollingAreaSource = new JScrollPane(sourceNamesText);
@@ -63,7 +63,7 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(scrollingAreaSource , cc.xy(3, 5));
 
         //target nodes
-        JLabel targets = new JLabel("<html> Enter target nodes(will edit) <br> " +
+        JLabel targets = new JLabel("<html> Enter target nodes <br> " +
             "(target1 [tab] target2 [tab] ... targetN) </html>");
         targetNamesText = new JTextArea(7,10);
         JScrollPane scrollingAreaTarget = new JScrollPane(targetNamesText);

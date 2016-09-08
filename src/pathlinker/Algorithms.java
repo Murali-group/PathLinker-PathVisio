@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.pathvisio.desktop.PvDesktop;
 
 /**
  * // -------------------------------------------------------------------------
@@ -127,7 +128,9 @@ public class Algorithms {
      * @param maxK the number of shortest paths
      * @return a list of k-shortest paths in sorted order by cost
      */
-    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK) {
+    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK,PvDesktop desktop) {
+
+        JOptionPane.showMessageDialog(desktop.getFrame(), "howdy");
         // the list of shortest paths
         ArrayList<Path> A = new ArrayList<Path>();
 
