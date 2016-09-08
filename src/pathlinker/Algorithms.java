@@ -169,7 +169,7 @@ public class Algorithms {
         }
 
         for(int k = 1; k < maxK; k++){
-            bar.setValue(k-1);
+            bar.setValue(k);
             // previously computed shortest path
             Path latestPath = A.get(A.size() - 1);
 
