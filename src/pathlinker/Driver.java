@@ -1,5 +1,6 @@
 package pathlinker;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -190,6 +191,7 @@ public class Driver {
             gnode.setMWidth(80);
             gnode.setTextLabel(s);
             gnode.setElementID(s);
+            gnode.setColor(Color.BLUE);
             n.addAttribute("X", x);
             n.addAttribute("Y", y);
             n.addAttribute("gNode", gnode);
@@ -245,6 +247,7 @@ public class Driver {
             gnode.setMWidth(80);
             gnode.setTextLabel(s);
             gnode.setElementID(s);
+            gnode.setColor(Color.RED);
             curr.addAttribute("X", x);
             curr.addAttribute("Y", y + 100);
             x = x + 100;
@@ -253,7 +256,7 @@ public class Driver {
         }
 
         // print edges
-        // want to move to above loop for effecience.
+        // want to move to above loop for efficiency.
         // not priority yet though
         for(Node n : subgraph){
             for(Edge e : n.getEachLeavingEdge()){
