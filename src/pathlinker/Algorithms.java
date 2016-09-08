@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -130,7 +131,7 @@ public class Algorithms {
      */
     public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK,PvDesktop desktop) {
 
-        JOptionPane.showMessageDialog(desktop.getFrame(), "howdy");
+        JProgressBar bar = new JProgressBar(0,maxK);
         // the list of shortest paths
         ArrayList<Path> A = new ArrayList<Path>();
 
@@ -168,6 +169,7 @@ public class Algorithms {
         }
 
         for(int k = 1; k < maxK; k++){
+            bar.setValue(k-1);
             // previously computed shortest path
             Path latestPath = A.get(A.size() - 1);
 

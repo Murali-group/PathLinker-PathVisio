@@ -151,7 +151,7 @@ public class Driver {
         Algorithms.setEdgeWeights(edgeWeights);
 
         // runs pathlinker
-        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100);
+        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100,desktop);
 
         Graph subgraph = new DefaultGraph("subgraph", false, false);
         HashSet<String> edges = new HashSet<>();
