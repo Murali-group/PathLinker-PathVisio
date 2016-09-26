@@ -11,11 +11,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Scanner;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
@@ -36,8 +37,12 @@ public class Driver {
 
 
     // rough setup. will modulize later
-    public void buildSubgraphs(String sourceNodes, String targetNodes, String backgroundGraphFile,JPanel panel)
-        throws IOException {
+    public void
+        buildSubgraphs(String sourceN, String targetN, String backgroundGraphFile, String pathNum)
+            throws IOException {
+        int k = Integer.parseInt(pathNum);
+        String sourceNodes = sourceN.replace(',', ' ');
+        String targetNodes = targetN.replace(',', ' ');
         long time = System.nanoTime();
         if(!desktop.getSwingEngine().canDiscardPathway()){
             return;
@@ -49,6 +54,8 @@ public class Driver {
         HashSet<String> targets = new HashSet<>();
 
         // read sources
+
+        System.out.println(sourceNodes);
         Scanner input = new Scanner(sourceNodes);
         while(input.hasNext()){
             sources.add(input.next());
@@ -56,6 +63,8 @@ public class Driver {
         input.close();
 
         // read targets
+
+        System.out.println(targetNodes);
         input = new Scanner(targetNodes);
 
         while(input.hasNext()){
@@ -152,7 +161,7 @@ public class Driver {
         Algorithms.setEdgeWeights(edgeWeights);
 
         // runs pathlinker
-        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, 100,panel);
+        ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, k);
 
         Graph subgraph = new DefaultGraph("subgraph", false, false);
         HashSet<String> edges = new HashSet<>();
@@ -161,19 +170,23 @@ public class Driver {
         }
         graph = subgraph;
 
-        printGraph(subgraph, sources, targets, pathway);
+        String text = printGraph(subgraph, sources, targets, pathway);
         System.out.println(System.nanoTime() - time);
+        JOptionPane.showMessageDialog(desktop.getFrame(), text);
     }
 
 
     // want to try printing backwards?????
     // could have a better looking layout
     // will update for later
-    private void printGraph(
+    private String printGraph(
         Graph subgraph,
         HashSet<String> sources,
         HashSet<String> targets,
         Pathway pathway) {
+        // builds a string for summary
+        StringBuilder sb = new StringBuilder();
+        sb.append("Source Nodes found: ");
         Queue<Node> queue = new ArrayDeque<>();
         double x = 65;
         double y = 65;
@@ -183,9 +196,12 @@ public class Driver {
             if(n == null){
                 continue;
             }
+            sb.append(s);
+            sb.append(' ');
             queue.add(n);
             visitedElements.add(s);
             PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+            gnode.setDataNodeType(DataNodeType.PROTEIN);
             gnode.setMCenterX(x);
             gnode.setMCenterY(65);
             gnode.setMHeight(20);
@@ -199,6 +215,7 @@ public class Driver {
             x = x + 100;
             pathway.add(gnode);
         }
+        sb.append('\n');
 
         // reset x to 65. happens every level
         x = 65;
@@ -217,6 +234,7 @@ public class Driver {
                 Node curr = e.getTargetNode();
                 if(!visitedElements.contains(curr.getId()) && !targets.contains(curr.getId())){
                     PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+                    gnode.setDataNodeType(DataNodeType.PROTEIN);
                     gnode.setMCenterX(x);
                     gnode.setMCenterY(y + 100);
                     gnode.setMHeight(20);
@@ -235,13 +253,17 @@ public class Driver {
         }
 
         x = 65;
+        sb.append("Target Nodes found: ");
         for(String s : targets){
             Node curr = subgraph.getNode(s);
             if(curr == null){
                 continue;
             }
+            sb.append(s);
+            sb.append(' ');
             visitedElements.add(s);
             PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+            gnode.setDataNodeType(DataNodeType.PROTEIN);
             gnode.setMCenterX(x);
             gnode.setMCenterY(y + 100);
             gnode.setMHeight(20);
@@ -255,6 +277,7 @@ public class Driver {
             curr.addAttribute("gNode", gnode);
             pathway.add(gnode);
         }
+        sb.append('\n');
 
         // print edges
         // want to move to above loop for efficiency.
@@ -275,10 +298,13 @@ public class Driver {
                 }
             }
         }
+        sb.append("Total nodes: ");
+        sb.append(subgraph.getNodeCount());
+        sb.append('\n');
+        sb.append("Total Edges: ");
+        sb.append(subgraph.getEdgeCount());
+        return sb.toString();
     }
-
-
-
 
 
     private void makePath(Path p) {
@@ -322,7 +348,6 @@ public class Driver {
         }
 
     }
-
 
 
     private void makeSubgraph(Path p, Graph subgraph, HashSet<String> edges) {

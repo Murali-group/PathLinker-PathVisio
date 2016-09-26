@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -129,10 +127,7 @@ public class Algorithms {
      * @param maxK the number of shortest paths
      * @return a list of k-shortest paths in sorted order by cost
      */
-    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK,JPanel panel) {
-        JLabel text = new JLabel();
-        text.setText("0/" + maxK);
-        panel.add(text);
+    public static ArrayList<Path> ksp(Graph network, Node source, Node target, int maxK) {
         // the list of shortest paths
         ArrayList<Path> A = new ArrayList<Path>();
 

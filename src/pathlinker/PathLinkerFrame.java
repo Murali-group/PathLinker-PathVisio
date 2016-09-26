@@ -3,8 +3,11 @@ package pathlinker;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
@@ -15,19 +18,20 @@ public class PathLinkerFrame extends OkCancelDialog {
     private JTextField graphFile;
     private JTextArea sourceNamesText;
     private JTextArea targetNamesText;
+    private JTextField pathNum;
     private Driver driver;
     public PathLinkerFrame(JFrame parent, PathLinker path) {
         super(parent, "PathLinker", parent, true);
         pathlinker = path;
         setDialogComponent(createDialogPane());
-        setSize(500, 500);
+        setSize(500, 550);
         driver = new Driver(pathlinker.desktop);
     }
 
     protected Component createDialogPane() {
         FormLayout layout = new FormLayout (
                 "pref, 4dlu, 150dlu, 4dlu, min",
-                "40dlu, 1dlu, 20dlu, 1dlu, 100dlu, 1dlu, 20dlu, 1dlu, 100dlu");
+                "40dlu, 1dlu, 20dlu, 1dlu, 100dlu, 1dlu, 20dlu, 1dlu, 100dlu, 40dlu");
         JPanel panel = new JPanel(layout);
         CellConstraints cc = new CellConstraints();
 
@@ -70,13 +74,18 @@ public class PathLinkerFrame extends OkCancelDialog {
         panel.add(targets,cc.xy(3, 7));
         panel.add(scrollingAreaTarget , cc.xy(3, 9));
 
+        //path number input
+        JLabel paths = new JLabel("Number of paths to produce: ");
+        pathNum = new JTextField();
+        panel.add(paths,cc.xy(1,10));
+        panel.add(pathNum,cc.xy(3,10));
+
         return panel;
     }
 
     protected void okPressed() {
        try{
-        JPanel panel = new JPanel();
-        driver.buildSubgraphs(sourceNamesText.getText(), targetNamesText.getText(), graphFile.getText(),panel);
+        driver.buildSubgraphs(sourceNamesText.getText(), targetNamesText.getText(), graphFile.getText(),pathNum.getText());
     }catch(IOException e){
         // TODO Auto-generated catch block
         e.printStackTrace();
