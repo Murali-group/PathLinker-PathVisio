@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
+import org.bridgedb.DataSource;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -202,6 +205,7 @@ public class Driver {
             visitedElements.add(s);
             PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
             gnode.setDataNodeType(DataNodeType.PROTEIN);
+            gnode.setDataSource(DataSource.getExistingByFullName("Uniprot-TrEMBL"));
             gnode.setMCenterX(x);
             gnode.setMCenterY(65);
             gnode.setMHeight(20);
@@ -213,6 +217,16 @@ public class Driver {
             n.addAttribute("Y", y);
             n.addAttribute("gNode", gnode);
             x = x + 100;
+            try{
+                URL url = new URL("http://www.uniprot.org/uniprot/" + s + ".txt");
+                Scanner in = new Scanner(url.openStream());
+                in.next();
+                gnode.setTextLabel(in.next());
+                in.close();
+            }catch(IOException e){
+                gnode.setTextLabel(s);
+                e.printStackTrace();
+            }
             pathway.add(gnode);
         }
         sb.append('\n');
@@ -235,15 +249,25 @@ public class Driver {
                 if(!visitedElements.contains(curr.getId()) && !targets.contains(curr.getId())){
                     PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
                     gnode.setDataNodeType(DataNodeType.PROTEIN);
+                    gnode.setDataSource(DataSource.getExistingByFullName("Uniprot-TrEMBL"));
                     gnode.setMCenterX(x);
                     gnode.setMCenterY(y + 100);
                     gnode.setMHeight(20);
                     gnode.setMWidth(80);
-                    gnode.setTextLabel(curr.getId());
                     gnode.setElementID(curr.getId());
                     curr.addAttribute("X", x);
                     curr.addAttribute("Y", y + 100);
                     curr.addAttribute("gNode", gnode);
+                    try{
+                        URL url = new URL("http://www.uniprot.org/uniprot/" + gnode.getElementID() + ".txt");
+                        Scanner in = new Scanner(url.openStream());
+                        in.next();
+                        gnode.setTextLabel(in.next());
+                        in.close();
+                    }catch(IOException e1){
+                        gnode.setTextLabel(gnode.getElementID());
+                        e1.printStackTrace();
+                    }
                     x = x + 100;
                     pathway.add(gnode);
                     visitedElements.add(curr.getId());
@@ -264,17 +288,31 @@ public class Driver {
             visitedElements.add(s);
             PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
             gnode.setDataNodeType(DataNodeType.PROTEIN);
+            gnode.setDataSource(DataSource.getExistingByFullName("Uniprot-TrEMBL"));
+
             gnode.setMCenterX(x);
             gnode.setMCenterY(y + 100);
             gnode.setMHeight(20);
             gnode.setMWidth(80);
-            gnode.setTextLabel(s);
             gnode.setElementID(s);
+
             gnode.setColor(Color.RED);
             curr.addAttribute("X", x);
             curr.addAttribute("Y", y + 100);
             x = x + 100;
             curr.addAttribute("gNode", gnode);
+
+            try{
+                URL url = new URL("http://www.uniprot.org/uniprot/" + s + ".txt");
+                Scanner in = new Scanner(url.openStream());
+                in.next();
+                gnode.setTextLabel(in.next());
+                in.close();
+            }catch(IOException e){
+                gnode.setTextLabel(s);
+                e.printStackTrace();
+            }
+
             pathway.add(gnode);
         }
         sb.append('\n');
