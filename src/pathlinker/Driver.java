@@ -1,11 +1,10 @@
 package pathlinker;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -13,10 +12,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Scanner;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.bridgedb.DataSource;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.pathvisio.core.model.DataNodeType;
@@ -58,7 +60,6 @@ public class Driver {
 
         // read sources
 
-        System.out.println(sourceNodes);
         Scanner input = new Scanner(sourceNodes);
         while(input.hasNext()){
             sources.add(input.next());
@@ -67,7 +68,6 @@ public class Driver {
 
         // read targets
 
-        System.out.println(targetNodes);
         input = new Scanner(targetNodes);
 
         while(input.hasNext()){
@@ -77,7 +77,7 @@ public class Driver {
         input.close();
 
         // creates graph with super sources and targets
-        Graph graph = new DefaultGraph("mainGraph", false, false);
+        final Graph graph = new DefaultGraph("mainGraph", false, false);
         Node superSource = graph.addNode("SOURCE");
         Node superTarget = graph.addNode("TARGET");
 
@@ -91,57 +91,88 @@ public class Driver {
         HashMap<Edge, Double> edgeWeights = new HashMap<>();
 
         // sum of all weights in graph. used for log transform
-        double sumWeight = 0;
-        String line;
 
         reader.readLine();
-        while((line = reader.readLine()) != null){
 
-            // adds nodes if not there and the corresponding edge between 2
-            // nodes to the
-            // graph
-            input = new Scanner(line);
+        JOptionPane optionPane = new JOptionPane(
+            "Reading Background Network...",
+            JOptionPane.QUESTION_MESSAGE,
+            JOptionPane.DEFAULT_OPTION);
+        JDialog dialog = optionPane.createDialog(null, "Please Wait...");
+        dialog.setModal(true);
 
-            Node start = graph.addNode(input.next());
-            Node end = graph.addNode(input.next());
-            double weight = input.nextDouble();
-            StringBuilder sb = new StringBuilder();
-            sb.append(start.getId());
-            sb.append("->");
-            sb.append(end.getId());
-            Edge edge = graph.addEdge(sb.toString(), start, end, true);
-            edge.addAttribute("weight", weight);
+        Thread t = new Thread(new Runnable() {
 
-            // puts weight in edgeWeight map
-            edgeWeights.put(edge, weight);
+            public void run() {
+                String line;
+                double sumWeight = 0;
+                try{
+                    while((line = reader.readLine()) != null){
+                        // adds nodes if not there and the corresponding edge
+                        // between 2
+                        // nodes to the
+                        // graph
+                        Scanner input = new Scanner(line);
+                        Node start = graph.addNode(input.next());
+                        Node end = graph.addNode(input.next());
+                        double weight = input.nextDouble();
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(start.getId());
+                        sb.append("->");
+                        sb.append(end.getId());
+                        Edge edge = graph.addEdge(sb.toString(), start, end, true);
+                        edge.addAttribute("weight", weight);
 
-            // connects source to super source
-            if(sources.contains(start.getId())){
-                // adds edgeweight of 0 to edgemap
-                edgeWeights.put(graph.addEdge("_" + start.getId(), superSource, start, true), 0.);
+                        // puts weight in edgeWeight map
+                        edgeWeights.put(edge, weight);
+
+                        // connects source to super source
+                        if(sources.contains(start.getId())){
+                            // adds edgeweight of 0 to edgemap
+                            edgeWeights.put(
+                                graph.addEdge("_" + start.getId(), superSource, start, true),
+                                0.);
+                        }
+
+                        // connects target to super targets
+                        if(targets.contains(end.getId())){
+                            edgeWeights
+                                .put(graph.addEdge(end.getId() + "_", end, superTarget, true), 0.);
+                        }
+
+                        // adds all edges entering a source to hidden edges
+                        if(sources.contains(end.getId())){
+                            hiddenEdges.add(edge);
+                        }
+
+                        // adds all edges leaving a target to hidden edges
+                        else if(targets.contains(start.getId())){
+                            hiddenEdges.add(edge);
+                            // if edge isn't initially hidden add it to
+                            // sumWeight
+                        }else{
+                            sumWeight = sumWeight + weight;
+                        }
+                        input.close();
+                    }
+                }catch(IdAlreadyInUseException | EdgeRejectedException | IOException e){
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                try{
+                    reader.close();
+                }catch(IOException e){
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                dialog.dispose();
             }
-
-            // connects target to super targets
-            if(targets.contains(end.getId())){
-                edgeWeights.put(graph.addEdge(end.getId() + "_", end, superTarget, true), 0.);
-            }
-
-            // adds all edges entering a source to hidden edges
-            if(sources.contains(end.getId())){
-                hiddenEdges.add(edge);
-            }
-
-            // adds all edges leaving a target to hidden edges
-            else if(targets.contains(start.getId())){
-                hiddenEdges.add(edge);
-                // if edge isn't initially hidden add it to sumWeight
-            }else{
-                sumWeight = sumWeight + weight;
-            }
+        });
+        t.start();
+        if(t.isAlive()){
+            dialog.setVisible(true);
         }
-
-        reader.close();
-
         // log transform edgeWeights
         for(Edge edge : edgeWeights.keySet()){
             if(hiddenEdges.contains(edge))
@@ -171,7 +202,6 @@ public class Driver {
         for(Path p : result){
             makeSubgraph(p, subgraph, edges);
         }
-        graph = subgraph;
 
         String text = printGraph(subgraph, sources, targets, pathway);
         System.out.println(System.nanoTime() - time);
@@ -244,7 +274,7 @@ public class Driver {
                 x = 65;
             }
             for(Edge e : prev.getEachLeavingEdge()){
-                System.out.println(e.getSourceNode().getId() + ":" + e.getTargetNode().getId());
+
                 Node curr = e.getTargetNode();
                 if(!visitedElements.contains(curr.getId()) && !targets.contains(curr.getId())){
                     PathwayElement gnode = PathwayElement.createPathwayElement(ObjectType.DATANODE);
@@ -259,7 +289,8 @@ public class Driver {
                     curr.addAttribute("Y", y + 100);
                     curr.addAttribute("gNode", gnode);
                     try{
-                        URL url = new URL("http://www.uniprot.org/uniprot/" + gnode.getElementID() + ".txt");
+                        URL url = new URL(
+                            "http://www.uniprot.org/uniprot/" + gnode.getElementID() + ".txt");
                         Scanner in = new Scanner(url.openStream());
                         in.next();
                         gnode.setTextLabel(in.next());
