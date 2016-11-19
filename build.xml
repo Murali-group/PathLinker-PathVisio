@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<project name="pathlinker" default="jar" basedir=".">
+
+  <property name="pathvisio.dir" value="E:\Program Files (x86)\pathvisio\common-bundles"/>
+    <property name="jar.name" value="PathLinker.jar"/>
+  <property name="lib.dir"     value="."/>    
+        <path id="project.class.path">
+        <fileset dir="${pathvisio.dir}/modules">
+            <include name="org.pathvisio.core.jar"/>
+            <include name="org.pathvisio.gui.jar"/>
+            <include name="org.pathvisio.desktop.jar"/>
+        </fileset>
+        <fileset dir="${pathvisio.dir}/lib">
+            <include name="org.eclipse.osgi.jar"/>
+            <include name="felix.jar"/>
+            <include name="org.bridgedb.jar"/>
+            <include name="org.bridgedb.gui.jar"/>
+            <include name="org.bridgedb.rdb.jar"/>
+            <include name="org.bridgedb.rdb.construct.jar"/>
+            <include name="org.bridgedb.bio.jar"/> 
+            <include name="derby"/> 
+            <include name="org.apache.xerces_2.9.0.v201101211617"/>
+            <include name="org.wikipathways.client.bundle-3.2.0"/>
+        	<include name="org.pathvisio.jgoodies.forms.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+     </path>
+    <target name="prepare">
+            <mkdir dir="build"/>            
+            <unjar dest="build">
+                    <patternset>
+                          <include name="**/*.jar"/>             
+                    </patternset>
+                    <fileset dir="${lib.dir}">
+                          <include name="**/*.jar"/>             
+                    </fileset>
+            </unjar>
+            <mkdir dir="${bundle.dest}"/>
+            <fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
+                <condition>
+                    <not><available file="${pathvisio.dir}/modules/org.pathvisio.core.jar"/></not>
+                </condition>
+            </fail>
+        </target>
+
+        <target name="clean">
+            <delete dir="build"/>
+            <delete file="${jar.name}"/>
+        </target>
+
+        <target name="compile" depends="prepare">
+            <echo>Compiling: ${jar.name}</echo>
+            <javac srcdir="src"
+                   includes="**"
+                   destdir="build"
+                   debug="${debug.mode}">
+           <classpath refid="project.class.path"/>
+            </javac>
+        </target>
+    <target name="jar" depends="compile"> 
+            <echo>Creating JAR: ${jar.name}</echo>
+            <jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF" >
+                <fileset dir="build">
+                    <include name="**/*"/>                  
+                    </fileset>
+                    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />                    
+         </jar>
+        </target>
+
+        <target name="install" depends="jar"> 
+            <copy toDir="${bundle.dest}" flatten="true">
+                <fileset dir=".">
+                    <include name="${jar.name}"/>
+                </fileset>
+            </copy>
+            <delete file="${jar.name}"/>
+        </target>
+
+        <target name="dist-clean" depends="clean">
+            <delete dir="${bundle.dest}"/>
+        </target>
+
+        <target name="all" depends="install" description="Clean, compile, jar, install" />
+    
+</project>

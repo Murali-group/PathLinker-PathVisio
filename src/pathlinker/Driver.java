@@ -37,7 +37,7 @@ public class Driver {
 
     public Driver(PvDesktop desk) {
         desktop = desk;
-        visitedElements = new HashSet<>();
+        visitedElements = new HashSet<String>();
     }
 
 
@@ -55,8 +55,8 @@ public class Driver {
         desktop.getSwingEngine().newPathway();
         pathway = desktop.getSwingEngine().getEngine().getActivePathway();
         // String set of sources and targets for ksp
-        HashSet<String> sources = new HashSet<>();
-        HashSet<String> targets = new HashSet<>();
+        HashSet<String> sources = new HashSet<String>();
+        HashSet<String> targets = new HashSet<String>();
 
         // read sources
 
@@ -88,7 +88,7 @@ public class Driver {
         HashSet<Edge> hiddenEdges = new HashSet<Edge>();
 
         // hash map of edge weights
-        HashMap<Edge, Double> edgeWeights = new HashMap<>();
+        HashMap<Edge, Double> edgeWeights = new HashMap<Edge,Double>();
 
         // sum of all weights in graph. used for log transform
 
@@ -96,11 +96,11 @@ public class Driver {
 
         JOptionPane optionPane = new JOptionPane(
             "Reading Background Network...",
-            JOptionPane.QUESTION_MESSAGE,
-            JOptionPane.DEFAULT_OPTION);
+            JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.DEFAULT_OPTION,null,new Object[] {},null);
         JDialog dialog = optionPane.createDialog(null, "Please Wait...");
         dialog.setModal(true);
-
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         Thread t = new Thread(new Runnable() {
 
             public void run() {
@@ -155,7 +155,7 @@ public class Driver {
                         }
                         input.close();
                     }
-                }catch(IdAlreadyInUseException | EdgeRejectedException | IOException e){
+                }catch(Exception e){
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -198,7 +198,7 @@ public class Driver {
         ArrayList<Algorithms.Path> result = Algorithms.ksp(graph, superSource, superTarget, k);
 
         Graph subgraph = new DefaultGraph("subgraph", false, false);
-        HashSet<String> edges = new HashSet<>();
+        HashSet<String> edges = new HashSet<String>();
         for(Path p : result){
             makeSubgraph(p, subgraph, edges);
         }
